@@ -56,6 +56,9 @@ module RmsApiRuby
           camelized_params
         elsif camelized_params.nil?
           nil
+        elsif camelized_params[:itemUpdateRequest][:item][:itemInventory][:inventories][:inventory].size > 1
+          #ハッシュの配列にした場合に、.to_xmlで生成されるxmlが楽天RMSのXML仕様と合わない為、意図的にXMLを書き換える。
+          camelized_params.to_xml(root: 'request', camelize: :lower, skip_types: true).sub(/<inventory>\n/, '').reverse.sub("</inventory>\n".reverse, '').reverse
         else
           camelized_params.to_xml(root: :request, skip_types: true)
         end
